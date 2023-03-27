@@ -7,6 +7,7 @@ import axios from "axios";
 import { headers } from "@/next.config";
 
 const Profile = () => {
+  const [proLoading, setProLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const { pLoading, alert, user, setUser, showAlert, logout } =
     useGlobalContext();
@@ -25,6 +26,7 @@ const Profile = () => {
   }, []);
 
   const getProfile = async () => {
+    setProLoading(true);
     try {
       const res = await axios.get("http://localhost:1337/api/users/me", {
         headers: {
@@ -32,6 +34,7 @@ const Profile = () => {
         },
       });
 
+      setProLoading(false);
       setUsername(res.data.username);
       setEmail(res.data.email);
     } catch (error) {
@@ -44,30 +47,74 @@ const Profile = () => {
   }, [user]);
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (username != "" && username != user.user.username) {
+      updateUsername(username);
+    }
+    if (email != "" && email != user.user.email) {
+      updateEmail(email);
+    }
+    if (password != "") {
+      updatePassword(password);
+    }
+  };
 
-    data = {
-      username,
-      email,
-      password,
-    };
-
+  const updateUsername = async (username) => {
     try {
+      setLoading(true);
       const res = await axios.put(
         `http://localhost:1337/api/users/${user?.user.id}`,
-        data,
+        { username },
         {
           headers: {
             Authorization: "bearer " + user?.jwt,
           },
         }
       );
+      setLoading(false);
       console.log(res.data);
       logout();
     } catch (error) {
       console.log(error.response.data.error);
     }
   };
-
+  const updateEmail = async (email) => {
+    try {
+      setLoading(true);
+      const res = await axios.put(
+        `http://localhost:1337/api/users/${user?.user.id}`,
+        { email },
+        {
+          headers: {
+            Authorization: "bearer " + user?.jwt,
+          },
+        }
+      );
+      setLoading(false);
+      console.log(res.data);
+      logout();
+    } catch (error) {
+      console.log(error.response.data.error);
+    }
+  };
+  const updatePassword = async (password) => {
+    try {
+      setLoading(true);
+      const res = await axios.put(
+        `http://localhost:1337/api/users/${user?.user.id}`,
+        { password },
+        {
+          headers: {
+            Authorization: "bearer " + user?.jwt,
+          },
+        }
+      );
+      setLoading(false);
+      console.log(res.data);
+      logout();
+    } catch (error) {
+      console.log(error.response.data.error);
+    }
+  };
   if (pLoading) {
     return <div>loading...</div>;
   }
@@ -77,7 +124,8 @@ const Profile = () => {
         <div className="item">Orders</div>
         <div className="item">
           <div className="auth">
-            <h1>Profile</h1>
+            {proLoading ? <h1>Profile Loading...</h1> : <h1>Profile</h1>}
+
             <form action="">
               <input
                 type="text"

@@ -50,7 +50,7 @@ const Navbar = () => {
           </div>
           <div className="center">
             <Link className="link" href="/">
-              LAMASTORE
+              TURBO
             </Link>
           </div>
           <div className="right">
