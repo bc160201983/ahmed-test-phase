@@ -1,0 +1,4 @@
+Admin Email:ahmaddogar424@gmail.com
+Password: Ahmed123@
+
+The PostgreSQL is hosted on Azure server need internet connection.
