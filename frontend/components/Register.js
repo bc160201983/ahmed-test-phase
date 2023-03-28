@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Router, useRouter } from "next/router";
 import axios from "axios";
 import Link from "next/link";
@@ -6,12 +6,21 @@ import { headers } from "@/next.config";
 import { useGlobalContext } from "./Context";
 import Alert from "./Alert";
 import { setToken } from "@/lib/auth";
+import Cookies from "js-cookie";
 
 const Register = () => {
   const router = useRouter();
   const [input, setInput] = useState({ username: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const { showAlert, alert, setToken } = useGlobalContext();
+  const { showAlert, alert, setToken, setUser } = useGlobalContext();
+  useEffect(() => {
+    const User = Cookies.get("user")
+      ? JSON.parse(Cookies.get("user"))
+      : Cookies.remove();
+    setUser(User);
+    if (User) router.replace("/");
+  }, []);
+
   const handleChange = (e) => {
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -31,7 +40,7 @@ const Register = () => {
       setLoading(false);
       setToken(res.data);
 
-      router.replace("/profile");
+      showAlert(true, "Verificaiton Email Sent to you.");
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -64,6 +73,7 @@ const Register = () => {
       // }
     }
   };
+
   return (
     <div className="auth">
       <h1>Register</h1>

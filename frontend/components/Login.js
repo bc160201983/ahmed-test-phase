@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import { setToken } from "@/lib/auth";
@@ -11,8 +11,14 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState({ username: "", password: "" });
   const router = useRouter();
-  const { setPloading, showAlert, alert } = useGlobalContext();
-
+  const { setPloading, showAlert, alert, setUser } = useGlobalContext();
+  useEffect(() => {
+    const User = Cookies.get("user")
+      ? JSON.parse(Cookies.get("user"))
+      : Cookies.remove();
+    setUser(User);
+    if (User) router.replace("/");
+  }, []);
   const handleChange = (e) => {
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -32,7 +38,10 @@ const Login = () => {
       router.replace("/profile");
     } catch (error) {
       setLoading(false);
-      console.log(error.response.data.error);
+
+      if (error.response.data.error.name == "ApplicationError") {
+        showAlert(true, "Your account email is not confirmed");
+      }
       if (error.response.data.error.message == "2 errors occurred") {
         showAlert(true, "Fill the required feilds");
       }
@@ -48,6 +57,7 @@ const Login = () => {
       //"Invalid identifier or password"
     }
   };
+
   return (
     <div className="auth">
       <h1>Login</h1>

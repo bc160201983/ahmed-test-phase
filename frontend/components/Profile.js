@@ -121,7 +121,19 @@ const Profile = () => {
   return (
     <div className="wrapperProfile">
       <div className="top">
-        <div className="item">Orders</div>
+        <div className="item">
+          <h1>Orders</h1>
+          <div className="auth">
+            <table>
+              <tr>
+                <th>order Id</th>
+                <th>Product</th>
+                <th>Payment</th>
+                <th>Delivery</th>
+              </tr>
+            </table>
+          </div>
+        </div>
         <div className="item">
           <div className="auth">
             {proLoading ? <h1>Profile Loading...</h1> : <h1>Profile</h1>}
